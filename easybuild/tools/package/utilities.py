@@ -136,10 +136,16 @@ def package_with_fpm(easyblock):
     for exclude_files_glob in exclude_files_globs:
         cmdlist.extend(['--exclude', os.path.join(easyblock.installdir.lstrip(os.sep), exclude_files_glob)])
 
-    cmdlist.extend([
-        easyblock.installdir,
-        easyblock.module_generator.get_module_filepath(),
-    ])
+    if easyblock.cfg.easyblock == 'ModuleRC':
+        cmdlist.extend([
+            easyblock.installdir,
+            os.path.join(os.path.dirname(easyblock.module_generator.get_module_filepath()), easyblock.module_generator.DOT_MODULERC),
+        ])
+    else:
+        cmdlist.extend([
+            easyblock.installdir,
+            easyblock.module_generator.get_module_filepath(),
+        ])
     cmd = ' '.join(cmdlist)
     _log.debug("The flattened cmdlist looks like: %s", cmd)
     run_cmd(cmdlist, log_all=True, simple=True, shell=False)
